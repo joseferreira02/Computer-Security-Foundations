@@ -36,7 +36,7 @@
 -  **Mitigação de rede**: Bloqueio porta 445, segmentação de rede, monitorização SMB ativa[[6]](#ref6)[[5]](#ref5)
 
 
-## **References**
+## **Referências**
 
 <a id="ref1"></a>[1]: https://www.incibe.es/en/incibe-cert/early-warning/vulnerabilities/cve-2017-0144  
 <a id="ref2"></a>[2]: https://www.twingate.com/blog/tips/cve-2017-0144  
