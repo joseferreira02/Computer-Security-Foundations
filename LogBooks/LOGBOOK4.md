@@ -4,13 +4,65 @@ That's a detailed logbook about experiments with environment variables and secur
 
 ## **Environment Variables and Set-UID Programs Lab Logbook**
 
-### **Task 1: Manipulating Environment Variables**
 
+### **Task 1: Basic Environment Variable Management**
+
+The basic functionalities explored in this task include:
+
+1. **Viewing environment variables**: Using `printenv` and similar commands to display the current environment variables
+![Result of printenv](../images/logbook4/task1/printenv_result.png)
+
+2. **Adding new variables**: Using the `export` command to create and set new environment variables
+![Creation of new environment variable](../images/logbook4/task1/newvar_creation.png)
+
+3. **Removing variables**: Using the `unset` command to delete existing environment variables from the current environment
+![Deletion of environment variable](../images/logbook4/task1/newvar_deletion.png)
+
+Those operations allow us to alter the variables that many other programs will use, affecting their behavior.
 
 ---
 
+
 ### **Task 2: Passing Environment Variables from Parent Process to Child Process**
 
+In this task we explored how the environment variables set in a parent process can be accessed by child processes.
+
+Using the provided C code below and compilling it twice, changing only the `printenv()` function to print the environment variables in both the parent and child processes, we observed that both processes have access to the same set of environment variables. This demonstrates that environment variables are inherited by child processes from their parent process.
+
+```c
+// myprintenv.c
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+extern char **environ;
+void printenv()
+{
+    int i = 0;
+    while (environ[i] != NULL)
+    {
+        printf("%s\n", environ[i]);
+        i++;
+    }
+}
+void main()
+{
+    pid_t childPid;
+    switch (childPid = fork())
+    {
+    case 0: /* child process */
+        printenv();
+        exit(0);
+    default: /* parent process */
+        // printenv();
+        exit(0);
+    }
+}
+
+```
+
+The image below exemplifies how the child process is an exact copy of the parent process, including its environment variables. There are no differences between the two outputs (except from the file names).
+
+![Comparison of results of printenv between parent and child process ](../images/logbook4/task2/parent_child_diff.png)
 
 ---
 
