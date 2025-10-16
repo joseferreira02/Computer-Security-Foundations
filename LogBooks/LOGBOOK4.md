@@ -1,4 +1,4 @@
-That's a detailed logbook about experiments with environment variables and security in Linux! Here is the content organized and formatted using **Markdown**:
+# Logbook 4 - Environment Variables and Set-UID Programs
 
 ---
 
