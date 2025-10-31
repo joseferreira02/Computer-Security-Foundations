@@ -98,3 +98,11 @@ Note: we ran the program with its full path rather than `./stack-L1`. That makes
 
 
 
+## Address Visualization
+
+Has we explained above we can run the gdb and inspect the first 20 addresses to see exacly where we are hitting the address we want.
+
+![Logbook 5 — Buffer Overflow](/images/logbook5/address%20overflow.png)
+_Figure 9 - Address of Buffer Overflow_
+
+As we can see we above our the addresses above the return register have been replaced with 0x90 which is a nop slide. in the what should be the return address for BOF we actually choose an addresses slightly above it(`0xFFFFCA18`) to hit the NOP Slide eventually hitting the shellcode that will be in 500-len(shellcode)
