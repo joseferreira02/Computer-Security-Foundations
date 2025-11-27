@@ -1,0 +1,148 @@
+# Logbook 9 - Secret-Key Encryption Lab
+
+## Task 1: Frequency Analysis
+
+In this task, we were asked to solve `ciphertext.txt`, which was encrypted using a monoalphabetic substitution cipher. The method requested was frequency analysis, based on counting which letters appear most often in the text. The idea is that in any natural language (English in this case), some letters appear more frequently than others — for example, E and T are among the most common letters.
+
+We were provided a Python script (`freq.py`) that returns the top 20 most used single-letter frequencies, as well as bigram (2-letter sequence) and trigram (3-letter sequence) frequencies. After a short analysis, we observed that the most frequently occurring letters were n and y, and the most frequent trigram was ytn. It made sense to try mapping this trigram to THE, since T and E are heavily used in English. Testing this substitution in ciphertext.txt produced text that began to make sense.
+
+We applied the following command to perform the substitution:
+
+```sh
+sudo sh -c "tr 'ytn' 'THE' < ciphertext.txt > out.txt"
+```
+
+This command replaces the letters y, t, and n with T, H, and E, respectively, and writes the result to out.txt.
+
+Following the same method, we tried substituting vup with ING, but the result was not coherent, with words ending in strange letters like "..NI". We then realized that v was likely A, because sequences like "THvT" appeared frequently. From this, we deduced that "up" corresponded to "ND", and continued using trial-and-error guided by English word patterns.
+
+After several iterations, we were able to determine the full key. The final substitution command we used was:
+
+```sh
+sudo sh -c "tr 'vupytnmurglhxqadcfzebiskwjo' 'ANDTHEINGBWROSCYMVUPFLKXZQJ' < ciphertext.txt > out.txt"
+```
+
+This successfully decrypted the text using the frequency analysis method, combined with logical reasoning about English letter patterns and common words.
+
+![Logbook 8 — Task1 result](/images/logbook9/task1/task1Result.png)
+
+## Task 2: Encryption using Different Ciphers and Modes
+
+In this lab it is asked of us to generate a plaintext.txt with at least 1000 bytes so we ran python3 -c "print('a'*1000)" to have a very basic 1001 bytes text file that will allow us to use to encrypt and explore the difference between aes-128-ecb / cbc and ctr
+
+### Encryption
+
+#### AES-128-ECB
+
+We started with the simplest of the three modes: AES-128-ECB.
+To encrypt our plaintext.txt, all we need is a 16-byte hexadecimal key, which we generated using:
+```sh
+openssl rand -hex 16
+```
+which game us `1bc9777ccdc749c60ee668ba9be05503`.
+then we encrypted our plaintext.txt using the command:
+```sh
+sudo openssl enc -aes-128-ecb -nopad -in plaintext.txt -out ciphertext.bin -K 1bc9777ccdc749c60ee668ba9be05503
+```
+![Logbook 8 — Task1 result](/images/logbook9/task2/task2ecb.png)
+
+** So what happed here? **
+Electronic Codebook (ECB) is the most basic mode of operation. It works by:
+-Splitting the plaintext into 16-byte blocks
+-Applying the AES encryption function to each block independently
+-Using PKCS#7 padding by default (unless -nopad is specified)
+Because each block is encrypted separately and without any added randomness, identical plaintext blocks always produce identical ciphertext blocks.In our test, the plaintext consisted entirely of a's. Since each block of 16 a characters is the same, the ECB encryption returned the same ciphertext block repeated multiple times.
+This is the main reason ECB is considered insecure,it leaks structural information about the plaintext, making patterns visible even after encryption.
+
+#### AES-128-CBC
+
+In Cipher Block Chaining (CBC), the arguments differ slightly from ECB. In addition to providing the key (K), CBC also requires an initialization vector (IV). The IV must be a random, unique 16-byte (128-bit) value, because CBC creates its security by introducing randomness into the first block of encryption.
+To generate both the key and the IV, we can use: :
+```sh
+openssl rand -hex 16
+```
+We run this command twice—once for the key and once for the IV.
+
+After that, we encrypt the plaintext using the following command:
+```sh
+sudo openssl enc -aes-128-cbc -K 8cacdb8a5b7bfd5a601134d30422ccc3\
+			      -iv 04943d5c76dc18b48d03873c7ac7be1b\
+			      -in plaintext.txt\
+			      -out cipherCBC.bin
+```
+and got the following result:
+
+![Logbook 8 — Task2CBC result](/images/logbook9/task2/task2cbc.png)
+
+The result looks more irregular (“random-looking”) than the ECB output, and this is expected. CBC mode works differently from ECB.
+Just like in ECB, the plaintext is split into 16-byte blocks and padded using PKCS#7.
+However, before encrypting each block, CBC XORs it with the previous ciphertext block.
+For example, instead of computing:
+```
+C3 = AES(K, B3)
+```
+CBC computes:
+```
+C3 = AES(K, B3 XOR C2)
+```
+This chaining makes the encryption more secure, since changing even one bit in the plaintext affects all following ciphertext blocks.
+So what is the IV used for?
+Because the first block has no previous ciphertext block, CBC uses the IV instead:
+```
+C1 = AES(K, B1 XOR IV)
+```
+This ensures that encrypting the same plaintext twice with the same key still produces different ciphertext, thanks to the random IV. This added randomness is exactly what makes CBC more secure than ECB.
+
+#### AES-128-CTR
+
+The idea behind AES-128-CTR is completely different from ECB and CBC.
+We still use a key (like the other modes) and a nonce (IV), which must be unique but does not need to be secret.
+
+We generate the key and IV in the same way as AES-128-CBC. Then we encrypt our plaintext.txt using:
+```sh
+sudo openssl enc -aes-128-ctr -K 7d8c04a0038e0205e8261bca535204fd\
+			      -iv 415d32f4544dda2a238f5b3d4376dd3c\
+			      -in plaintext.txt\
+			      -out cipherCTR.bin
+
+```
+with the following result:
+![Logbook 8 — Task2CTR result](/images/logbook9/task2/task2ctr.png)
+
+So what happened?
+CTR mode is a stream cipher, meaning it operates on data one byte at a time, rather than fixed 16-byte blocks.First, a keystream is generated that has nothing to do with the plaintext.The keystream is produced by encrypting the IV combined with a counter:
+```
+keystream_block = AES(K, IV || counter)
+```
+The **counter** starts at 0 (or 1) and increments for each 16-byte block of plaintext.This produces a sequence of keystream blocks that is as long as the plaintext.
+The encryption process is as follows:
+1. Generate the keystream using `AES(K, IV || counter)` for each block.
+2. XOR the keystream with the plaintext:
+```
+ciphertext = plaintext XOR keystream
+```
+This XOR operation produces the final encrypted file (`cipherCTR.bin`).
+
+### Decryption 
+
+#### AES-128-ECB
+The decrytion is done by using the decryption of AES for all the 16 byte blocks:
+```
+P_i = AES⁻¹(K, C_i)
+```
+#### AES-128-CBC
+To recover the original plaintext, each ciphertext block is decrypted first, then XORed with the previous ciphertext block (or IV for the first block):
+```
+P_0 = AES⁻¹(K, C_0) XOR IV
+P_i = AES⁻¹(K, C_i) XOR C_{i-1}   for i >= 1
+```
+
+#### AES-128-CTR
+Decryption is identical to encryption because XOR is symmetric:
+```
+Keystream_i = AES(K, IV || counter_i)
+P_i = C_i XOR Keystream_i
+```
+
+
+
