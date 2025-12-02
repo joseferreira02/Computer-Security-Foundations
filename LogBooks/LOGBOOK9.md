@@ -144,5 +144,69 @@ Keystream_i = AES(K, IV || counter_i)
 P_i = C_i XOR Keystream_i
 ```
 
+## Challenge
 
+In this week's guide, we were challenged to decipher a text that was ciphered with a Vigenère Cipher, which consists of shifting a text according to a repeating key.
 
+The valid symbols were the english alphabet from A to Z and the digits from 0 to 9, consisting on an alphabet of 36 characters with indexes going from 0 to 35, starting with the letters and then the numbers.
+
+As for the details given, we knew that the key had a size of 5 characters, that it had something to do with "Fundamentos de Segurança Informática" and that the ciphered text was the following:
+
+```
+N516MHZIFBN5OEDSVKGIY9WD7T4MD9YBP6MJDWDPY0WFOF2MAOXBWDGNX6GPH62D8K3Q4FFA4AOHZIF8T7MFTTCZVMIW66TTCLK9JBP2O1W09JZ3LF90WZ39FXZ2DIBW5DJ9QK9Z7IF8YSS6OMWXGRJ9J27P01KON4MLCJ
+```
+
+The first thing we did was to divide the text into substrings of 5 characters and, considering the given hint, try the acronym "FSI" as the first 3 characters of the key.
+
+The deciphering was done taking the explanation given on moodle as an example.
+
+After deciphering, we were left with something like this:
+
+| Ciphertext | Plaintext |
+| :---: | :---: |
+| N516M | INT** |
+| HZIFB | CHA** |
+| N5OED | ING** |
+| SVKGI | NDC** |
+| Y9WD7 | TRO** |
+| T4MD9 | OME** |
+| YBP6M | TTH** |
+| JDWDP | EVO** |
+| Y0WFO | TIO** |
+| F2MAO | AKE** |
+| XBWDG | STO** |
+| NX6GP | IFY** |
+| H62D8 | COU** |
+| K3Q4F | FLI** |
+| FA4AO | ASW** |
+| HZIF8 | CHA** |
+| T7MFT | OPE** |
+| TCZVM | OUR** |
+| IW66T | DEY** |
+| TCLK9 | OUD** |
+| JBP2O | ETH** |
+| 1W09J | WES** |
+| Z3LF9 | ULD** |
+| 0WZ39 | VER** |
+| FXZ2D | AFR** |
+| IBW5D | DTO** |
+| J9QK9 | ERI** |
+| Z7IF8 | UPA** |
+| YSS6O | TAK** |
+| MWXGR | HEP** |
+| J9J27 | ERB** |
+| P01KO | KIT** |
+| N4MLC | IME** |
+| J | E |
+
+Looking at the fractions of words we got, most of them made sense, but we searched for something we could try to complete to maybe find the key and decipher the whole text.
+
+We arrived at "EVO**TIO*", which we thought was the word "EVOLUTION", and got "FSI25" as a candidate key. 
+
+Applying this key to the given ciphertext, we got the following plaintext:
+
+```
+INTERCHANGINGMINDCONTROLCOMELETTHEREVOLUTIONTAKEITSTOLLIFYOUCOULDFLICKASWITCHANDOPENYOUR3RDEYEYOUDSEETHATWESHOULDNEVERBEAFRAIDTODIERISEUPANDTAKETHEPOWERBACKITSTIMETHE
+```
+
+Finally, as for the goal of this challenge, which was to answer the question "What should happen to the fat cats?", we think [it's time they had a heart attack.](https://www.youtube.com/watch?v=w8KQmps-Sog&list=RDw8KQmps-Sog&start_radio=1)
