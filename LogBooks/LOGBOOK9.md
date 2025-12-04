@@ -144,6 +144,51 @@ Keystream_i = AES(K, IV || counter_i)
 P_i = C_i XOR Keystream_i
 ```
 
+###### Conclusion
+Other than using the -d flag to tell OpenSSL we want to decrypt the message, we also need to provide the key and (when required) the IV/nonce:
+
+-Use -K followed by the hex-encoded key for all AES modes.
+-For CBC mode, we must also use -iv to supply the initialization vector.
+-For CTR mode, the -iv flag provides the nonce + initial counter.
+-ECB mode requires only the key; it does not use an IV or nonce.
+
+
+## Task 5: Error Propagation – Corrupted Cipher Text
+
+In this task, we were asked to analyze how corruption of a single byte affects the different ciphers studied in this lab. Specifically, we were instructed to corrupt byte number 150 (calculated as 50 × G, where G is our group number). The procedure for corrupting the files was the same for all ciphers. We opened each ciphertext.bin in Bless, navigated to offset 150 to locate the desired byte, and then modified it. For this experiment, we changed the 150th byte to `FF` in all the ciphertexts.
+
+### AES-128-ECB
+Starting with ECB, after corrupting the file, we decrypted it using the following command:
+
+```sh
+sudo openssl enc -aes-128-ecb -d -in corrupted.bin -out corrupted.txt -K 1bc9777ccdc749c60ee668ba9be05503 -nopad
+```
+We used the -d flag to instruct OpenSSL to decrypt, and -K 1bc9777ccdc749c60ee668ba9be05503 to specify the key used for encryption.
+
+After decryption, we obtained the following result:
+
+![Logbook 8 — Task5ECB result](/images/logbook9/task5/Task5ECB.png)
+
+This is interesting because we can see that only a single 16-byte block is corrupted in the entire file. This makes sense since ECB divides the plaintext into 16-byte blocks and encrypts each block independently with AES.
+
+### AES-128-CBC
+Now going to the cbc we used the command: 
+
+```sh
+sudo openssl enc -aes-128-cbc -d -in corrupted.bin -out corrupted.txt -K 8cacdb8a5b7bfd5a601134d30422ccc3 -iv 04943d5c76dc18b48d03873c7ac7be1b
+```
+Here, `-d` is used to decrypt, `-K` specifies the AES key, and `-iv` provides the initialization vector.
+
+The result of this operation produced the following text file:
+
+![Logbook 8 — Task5CBC result](/images/logbook9/task5/Task5CBC.png)
+
+Understanding this is a bit more challenging, but it makes sense when we think it through. CBC divides the text into 16-byte blocks, encrypts each block with AES, and then XORs it with the previous ciphertext block. Since AES is highly sensitive, any corruption in a block completely destroys that block during decryption.
+
+But why does the corruption only propagate to the next block, and why only one byte? This happens because AES decryption of the next block works perfectly — the only difference comes from XORing with the corrupted byte in the previous block. As a result, only the corresponding byte in the next block is affected. From that point onward, all subsequent blocks decrypt correctly because each block depends only on its own AES decryption and the previous ciphertext block. Therefore, corruption in CBC affects just two blocks: the corrupted block fully, and one byte in the next block.
+
+
+
 ## Challenge
 
 In this week's guide, we were challenged to decipher a text that was ciphered with a Vigenère Cipher, which consists of shifting a text according to a repeating key.
