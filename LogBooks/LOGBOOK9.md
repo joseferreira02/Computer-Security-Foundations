@@ -24,7 +24,7 @@ sudo sh -c "tr 'vupytnmurglhxqadcfzebiskwjo' 'ANDTHEINGBWROSCYMVUPFLKXZQJ' < cip
 
 This successfully decrypted the text using the frequency analysis method, combined with logical reasoning about English letter patterns and common words.
 
-![Logbook 8 — Task1 result](/images/logbook9/task1/task1Result.png)
+![Logbook 9 — Task1 result](/images/logbook9/task1/task1Result.png)
 
 ## Task 2: Encryption using Different Ciphers and Modes
 
@@ -44,7 +44,7 @@ then we encrypted our plaintext.txt using the command:
 ```sh
 sudo openssl enc -aes-128-ecb -nopad -in plaintext.txt -out ciphertext.bin -K 1bc9777ccdc749c60ee668ba9be05503
 ```
-![Logbook 8 — Task1 result](/images/logbook9/task2/task2ecb.png)
+![Logbook 9 — Task1 result](/images/logbook9/task2/task2ecb.png)
 
 ** So what happed here? **
 Electronic Codebook (ECB) is the most basic mode of operation. It works by:
@@ -72,7 +72,7 @@ sudo openssl enc -aes-128-cbc -K 8cacdb8a5b7bfd5a601134d30422ccc3\
 ```
 and got the following result:
 
-![Logbook 8 — Task2CBC result](/images/logbook9/task2/task2cbc.png)
+![Logbook 9 — Task2CBC result](/images/logbook9/task2/task2cbc.png)
 
 The result looks more irregular (“random-looking”) than the ECB output, and this is expected. CBC mode works differently from ECB.
 Just like in ECB, the plaintext is split into 16-byte blocks and padded using PKCS#7.
@@ -167,7 +167,7 @@ We used the -d flag to instruct OpenSSL to decrypt, and -K 1bc9777ccdc749c60ee66
 
 After decryption, we obtained the following result:
 
-![Logbook 8 — Task5ECB result](/images/logbook9/task5/Task5ECB.png)
+![Logbook 9 — Task5ECB result](/images/logbook9/task5/Task5ECB.png)
 
 This is interesting because we can see that only a single 16-byte block is corrupted in the entire file. This makes sense since ECB divides the plaintext into 16-byte blocks and encrypts each block independently with AES.
 
@@ -181,12 +181,26 @@ Here, `-d` is used to decrypt, `-K` specifies the AES key, and `-iv` provides th
 
 The result of this operation produced the following text file:
 
-![Logbook 8 — Task5CBC result](/images/logbook9/task5/Task5CBC.png)
+![Logbook 9 — Task5CBC result](/images/logbook9/task5/Task5CBC.png)
 
 Understanding this is a bit more challenging, but it makes sense when we think it through. CBC divides the text into 16-byte blocks, encrypts each block with AES, and then XORs it with the previous ciphertext block. Since AES is highly sensitive, any corruption in a block completely destroys that block during decryption.
 
 But why does the corruption only propagate to the next block, and why only one byte? This happens because AES decryption of the next block works perfectly — the only difference comes from XORing with the corrupted byte in the previous block. As a result, only the corresponding byte in the next block is affected. From that point onward, all subsequent blocks decrypt correctly because each block depends only on its own AES decryption and the previous ciphertext block. Therefore, corruption in CBC affects just two blocks: the corrupted block fully, and one byte in the next block.
 
+### AES-128-CTR
+
+Finally going to ctr we used the command:
+
+```sh
+sudo openssl enc -aes-128-ctr -d -in corrupted.bin -out corrupted.txt -K 7d8c04a0038e0205e8261bca535204fd -iv 415d32f4544dda2a238f5b3d4376dd3c
+```
+As explained above, `-d` is used to decrypt, `-K` specifies the AES key, and `-iv` provides the initialization vector.
+
+As a result, we got the following text file:
+
+![Logbook 9 — Task5CTR result](/images/logbook9/task5/Task5CTR.png)
+
+As we can see, only one byte is affected, because CTR mode of AES operates on data with XOR's one byte at a time, with the corruption on corrupted.bin only affecting the byte that was corrupted.
 
 
 ## Challenge
