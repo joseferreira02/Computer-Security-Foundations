@@ -267,7 +267,7 @@ http://www.seedlab-hashlen.com/?myname=JoseFerreira&uid=1003&lstcmd=1
 
 Final url:
 ```h
-http://www.seedlab-hashlen.com/?myname=JoseFerreira&uid=1003&lstcmd=1%80%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%01%60&down&download=secret.txt&mac=73c1b3041b67978c7807b7a7445e44f7d9a8a868a0fdd44fc65b888e73bb565f
+http://www.seedlab-hashlen.com/?myname=JoseFerreira&uid=1003&lstcmd=1%80%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%01%60&download=secret.txt&mac=73c1b3041b67978c7807b7a7445e44f7d9a8a868a0fdd44fc65b888e73bb565f
 ```
 
 ![Logbook 10 MacResponse](../images/logbook10/task3/TASK3result.png)
