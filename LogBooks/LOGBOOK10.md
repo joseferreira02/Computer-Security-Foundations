@@ -130,7 +130,7 @@ url = build_url(name, uid, lstcmd=True)
 print("URL:", url)
 ```
 
-### Task 2 : Create Padding
+## Task 2 : Create Padding
 
 To explore the hash extension attack, we first need to understand how padding works in SHA‑256.  
 SHA‑256 processes data in **64‑byte blocks**, which means the message must be padded so that its length becomes a multiple of 64 bytes.
@@ -184,7 +184,7 @@ Which leaves us with the final result of :
 "\x00\x00\x00\x00\x00\x00\x01\x60"
 ```
 
-### Task 3: The Length Extension Attack
+## Task 3: The Length Extension Attack
 
 In this task, we put everything together.  
 We already have the original request from Task 1 and the correct padding from Task 2. The remaining steps are to append the length-extension attack to the URL and forge a new MAC that validates both the padding and the malicious command added to the original message.
