@@ -61,7 +61,7 @@ openssl req -newkey rsa:2048 -sha256 \
   -keyout server.key \
   -out server.csr \
   -subj "/CN=www.ferreira.com/O=FSI Inc./C=PT" \
-  -addext "subjectAltName=DNS:www.ferreira.com,DNS:www.ferreiraA.com,DNS:www.ferreiraB.com" \
+  -addext "subjectAltName=DNS:www.ferreira2025.com,DNS:www.ferreira2025A.com,DNS:www.ferreira2025B.com" \
   -passout pass:dees
 ```
 
@@ -112,7 +112,82 @@ After signing our server certificate, we can inspect it using the following comm
 From the output, we can confirm that our server certificate includes multiple domains (SANs) as intended.
 
 
-⚠️ Warning: All keys and certificates shown are ephemeral and created solely for educational purposes. They are not trusted by any system and must never be used in production
 
 
 ## Task 4: Deploying Certificate in an Apache-Based HTTPS Website
+
+To access our server securely via **HTTPS** in a web browser, we need to load our server **certificate** and **private key** into Apache running inside the container.
+
+For this task, a shared folder named `volumes/` is provided between the host (seed machine) and the Docker container used in this lab. We copy `server.crt` and `server.key` into this shared folder so they become accessible from inside the container. Once inside, we move them to the `certs/` directory, where Apache expects to find them.
+
+Since the objective of this lab is to better understand **Public Key Infrastructure (PKI)** rather than web content development, we simply copy the existing `www/` directory from `bank32` and rename it to `ferreira2025`.
+
+Finally, we create our Apache `apache2` site configuration for the server, which is shown below:
+
+
+```apache
+<VirtualHost *:443>
+    DocumentRoot /var/www/ferreira2025
+    ServerName www.ferreira2025.com
+    ServerAlias www.ferreira2025A.com
+    ServerAlias www.ferreira2025B.com
+    DirectoryIndex index.html
+    SSLEngine On
+    SSLCertificateFile /certs/server.crt
+    SSLCertificateKeyFile /certs/server.key
+</VirtualHost>
+
+<VirtualHost *:80> 
+    DocumentRoot /var/www/ferreira2025
+    ServerName www.ferreira2025.com
+    DirectoryIndex index_red.html
+</VirtualHost>
+
+ServerName localhost
+```
+
+As shown in our `ferreira2025_apache_ssl.conf` file, we define a minimal Apache configuration that specifies where the website files are located inside the container.
+
+After creating this configuration, we run the necessary Apache commands to enable and activate our HTTPS site:
+
+
+```
+# starts apache and enables server
+a2enmod ssl 
+a2ensite ferreira2025_apache_ssl
+
+#Starts service for apache2
+# service apache2 start
+```
+
+### Result:
+
+When we open the website in a browser (we used Firefox), we notice something important:
+
+Even though our server has a certificate installed, the browser still displays a warning when accessing `https://ferreira2025.com`.
+
+
+![Logbook 11 — Firefox warning](/images/logbook11/Task4/Task4_warning.png)
+
+Why is this happening ?
+
+The PKI system operates on a chain of trust, which relies on **Trusted Root CAs** that are pre-approved by browsers and operating systems. Since the CAs we created in this lab are self-signed, they are **not trusted by default** in the browser.
+
+#### Fix:
+
+To bypass the browser warning, we need to add our lab CA certificate to Firefox's list of trusted **Authorities**.  
+
+We do this by navigating to:
+```
+about:preferences#privacy → Certificates → View Certificates → Authorities → Import → ca.crt
+```
+By importing our CA as trusted, Firefox now recognizes certificates issued by it. As a result, our website is trusted, and we can connect to `https://www.ferreira2025.com` via HTTPS **without any warnings or issues**.
+
+![Logbook 11 — Success https connection](/images/logbook11/Task4/Task4_success.png)
+
+
+
+
+
+
+⚠️ Warning: All keys and certificates shown are ephemeral and created solely for educational purposes. They are not trusted by any system and must never be used in production
