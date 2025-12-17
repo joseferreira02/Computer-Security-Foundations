@@ -15,7 +15,7 @@ openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 \
 ```
 This command generated a new 4096-bit RSA private key and immediately used it to create a self-signed x509 certificate valid for 10 years. The private key was saved to ca.key, and the resulting CA certificate was saved to ca.crt. During execution, the certificate’s input fields were filled with mostly mock values.
 
-![Logbook 11 — Creating CA](/images/logbook11/creating_CA.png)
+![Logbook 11 — Creating CA](/images/logbook11/Task1/creating_CA.png)
 
 After that we ran the command:
 ```sh
@@ -25,8 +25,8 @@ which outputs a display in full, human-readable content of our x509 certificate 
 
 Which resulted in the following:
 
-![Logbook 11 — x509 part1](/images/logbook11/Ca_x509p1.png)
-![Logbook 11 — x509 part2](/images/logbook11/Ca_x509pt2.png)
+![Logbook 11 — x509 part1](/images/logbook11/Task1/Ca_x509p1.png)
+![Logbook 11 — x509 part2](/images/logbook11/Task1//Ca_x509pt2.png)
 
 We also ran the command:
 ```sh
@@ -34,181 +34,8 @@ sudo openssl rsa -in ca.key -text -noout
 ```
 This command also displays the contents of the RSA private key stored in ca.key in a human-readable format
 
-Since the output was way to big and it would take couple of screenshots we decided to paste the result here:
+Since the output was way to big and it would take couple of screenshots we decided to paste the result [here](/images/logbook11/Task1/sensetive.md).
 
-```sh
-seed@VM:~/.../Labsetup$ sudo openssl rsa -in ca.key -text -noout
-Enter pass phrase for ca.key:
-RSA Private-Key: (4096 bit, 2 primes)
-modulus:
-    00:a5:70:4b:49:1e:f3:90:e6:ae:ff:50:47:a7:75:
-    70:9f:24:93:f5:87:58:f2:b8:8f:1b:87:e5:23:79:
-    64:b2:37:08:05:53:87:6d:89:6e:1b:3f:21:d9:ca:
-    ed:7d:63:c3:4f:c8:79:ec:13:b9:e1:a1:72:44:2b:
-    bd:36:bb:c0:8f:69:03:85:92:24:fb:0b:d8:49:79:
-    38:74:2b:7a:54:7b:7f:12:9e:17:0b:d9:a8:fb:3f:
-    df:fb:1c:97:75:bf:2d:25:45:4e:01:ca:3f:ea:b7:
-    90:d3:eb:41:9a:67:56:ea:42:e4:87:6e:ee:90:5b:
-    f7:01:c9:2c:56:f6:6b:c7:03:f2:8e:07:23:9b:c2:
-    da:dc:cd:0e:37:8e:ed:8a:1d:63:d2:df:1d:04:90:
-    79:3d:9e:61:b3:7b:ee:e5:68:ca:4c:d8:ee:a3:98:
-    a9:51:fa:3c:50:29:ca:05:f8:1c:31:9b:d1:41:84:
-    75:2e:c0:aa:88:02:ad:4c:8c:12:ad:5f:ca:52:6d:
-    80:52:20:3c:94:31:17:77:50:d7:87:0c:16:6a:85:
-    4c:10:49:f6:a0:74:c0:e2:2b:44:56:3c:b1:8a:f2:
-    c3:3a:54:49:bc:ce:af:d7:a6:6d:67:31:bf:6f:a8:
-    ac:70:72:2c:c4:fe:1d:5c:f8:29:37:db:de:66:c6:
-    33:ed:22:22:73:78:f6:17:dc:de:73:49:30:d3:c8:
-    32:23:7d:07:8e:ca:1e:d4:d4:9c:ac:c2:c3:5b:8f:
-    ca:75:a1:97:22:96:ad:ba:72:85:1b:b1:d0:39:82:
-    ae:21:5c:2c:4b:33:6c:5e:4a:8c:fd:34:ce:e4:46:
-    27:34:40:0e:b0:b6:72:1e:32:c8:36:2e:ad:05:a8:
-    8c:54:56:4b:49:79:76:4d:a0:82:0e:7b:10:8e:62:
-    6a:5a:fd:ba:60:84:d7:ba:07:1b:21:28:1c:9d:27:
-    86:72:ee:cd:15:ec:d4:e1:ad:46:5f:dc:23:41:c6:
-    a2:6d:48:a9:11:47:a6:60:45:8f:4a:ca:de:e8:69:
-    c4:b6:44:78:85:4f:65:d4:63:14:a9:13:81:8a:73:
-    99:ed:e4:06:dd:77:50:58:34:f4:4d:1b:7e:1e:38:
-    7e:65:63:eb:76:75:9f:81:f1:6f:4d:de:43:fc:c3:
-    0e:b9:1f:79:96:07:9e:92:cd:f2:60:f4:4f:d5:33:
-    89:03:b9:3e:a8:2d:31:63:4b:e5:b9:c0:59:f7:c6:
-    8b:97:eb:0b:3d:15:38:54:f2:85:9c:df:0d:c0:59:
-    87:79:70:1c:fd:b6:8e:d2:77:04:4c:64:b5:ad:88:
-    bc:5c:0c:5c:0a:b9:9d:d8:0c:7a:eb:53:b9:fb:5a:
-    44:de:2f
-publicExponent: 65537 (0x10001)
-privateExponent:
-    12:57:8a:e1:46:7f:36:97:7c:db:6d:a9:24:15:cf:
-    30:b5:bb:79:c3:51:c7:47:53:06:78:60:9d:38:3e:
-    43:cb:fa:25:ad:07:1c:cb:d9:db:47:7a:97:4c:fa:
-    5b:a6:8d:e6:f0:91:23:ed:63:f4:72:13:db:1f:06:
-    51:65:2b:8a:3a:d8:5b:1c:c2:e0:da:85:56:50:0c:
-    44:44:f5:c1:1c:18:10:96:5a:73:c3:e4:0a:47:20:
-    ac:14:95:6e:46:8d:d8:ce:00:42:0e:8c:5b:97:92:
-    85:0c:56:2f:aa:39:66:ab:97:ee:b4:0b:db:11:77:
-    27:49:88:92:f3:ab:2b:5b:72:ae:f0:77:b0:33:40:
-    54:ae:9f:5e:e5:87:cc:82:49:a8:fd:77:98:23:f4:
-    6d:32:7c:1e:8c:25:06:66:41:d7:97:4d:8d:f1:c5:
-    04:03:bc:60:1e:e1:f9:1b:72:f4:c5:13:c4:31:cd:
-    54:2b:a4:3c:84:1f:76:97:29:12:f3:c5:d8:b1:af:
-    42:6b:b4:8b:b1:8d:aa:7a:da:0a:6c:fa:a7:40:b4:
-    18:32:3b:17:bb:1a:0f:79:40:90:57:16:50:13:6e:
-    35:af:56:a5:8a:3c:d0:a9:f1:03:39:ee:c1:90:6f:
-    dd:df:aa:bb:04:79:78:ef:42:92:a0:db:dd:85:28:
-    08:7a:c6:38:7b:c6:cf:26:93:9e:89:5b:48:66:99:
-    f8:1e:ca:2a:46:14:0c:9a:ec:7e:04:90:ca:76:6d:
-    9d:82:c3:40:eb:aa:ce:cf:6c:df:62:e6:7c:08:ed:
-    14:0e:95:87:20:43:8f:c3:8e:8b:f9:2a:d1:5e:5a:
-    54:bd:e5:5e:cf:62:38:b1:dd:c1:a7:88:3b:96:c7:
-    89:28:18:51:c0:cd:f4:dd:b3:ef:4b:31:a5:cc:1c:
-    a9:e8:9b:2c:3c:d3:e3:ac:ef:d0:4c:7c:33:fa:30:
-    c0:36:9a:e8:57:ce:69:53:86:70:d0:c7:47:61:09:
-    d3:07:f5:a1:32:4e:a1:da:cc:13:82:88:0c:c4:3d:
-    ee:fa:db:40:80:fe:f9:d2:85:19:9e:02:d2:84:ac:
-    9a:5b:e4:92:b5:b4:4d:14:c7:65:e6:7c:02:a2:64:
-    e2:92:cd:9a:c6:d7:e0:db:e2:be:e4:eb:db:3a:2e:
-    81:af:be:87:29:3f:f0:1f:70:43:af:aa:aa:31:14:
-    db:53:41:28:d7:f1:8d:89:7a:f9:91:44:f2:2d:10:
-    3e:25:3d:98:f2:a5:bc:f6:7e:15:f7:6a:20:f1:96:
-    0e:cf:04:1d:a7:94:62:89:ee:e1:ba:83:90:8c:b7:
-    d8:fa:fe:7a:48:c4:57:1e:f3:81:f7:95:18:41:6c:
-    a7:11
-prime1:
-    00:d9:87:02:21:c7:ef:c5:25:31:fc:53:0e:32:b1:
-    4e:b2:c4:fb:93:5e:c3:e8:4f:fc:23:40:78:57:93:
-    40:73:90:dd:06:0a:78:ec:24:35:17:33:2e:8e:86:
-    4b:7b:e1:5b:44:a3:75:68:fc:9c:da:e1:17:16:7d:
-    f5:e8:5b:8c:56:82:69:48:15:bf:2c:4a:9f:2b:f6:
-    a4:b6:9d:34:83:01:f7:2a:8a:66:25:46:41:30:6e:
-    73:57:1b:b8:9e:19:00:e1:20:a7:d2:35:bf:95:38:
-    20:bf:6c:1c:1c:98:6c:04:2d:e0:af:2e:d2:dd:02:
-    0e:9c:5f:f4:5b:62:c3:1f:85:d5:eb:64:65:30:12:
-    30:93:a2:73:9f:2b:0b:be:bf:81:bd:4f:91:35:ec:
-    97:f7:e0:33:2b:3c:f6:ae:a8:9e:96:21:fc:01:56:
-    1e:ec:77:92:d9:5a:3f:f5:4b:b3:0e:d1:1e:05:90:
-    b9:53:55:ff:75:36:79:68:78:2c:c9:ee:be:a1:c9:
-    f5:d9:a5:98:5f:12:f6:70:b4:f1:9b:d9:db:f9:07:
-    53:94:b0:bb:1c:2f:42:69:07:b6:b1:b7:d8:70:5a:
-    6b:6a:e6:9b:7b:81:3f:40:2b:59:bb:97:3b:7e:51:
-    73:d3:08:03:90:a7:48:9b:81:06:31:bc:96:35:33:
-    b8:e3
-prime2:
-    00:c2:b2:dd:02:ed:ca:0b:15:50:58:6d:cf:aa:22:
-    f2:37:c0:bd:a0:15:96:35:79:66:f3:1f:fd:1b:9a:
-    a2:e1:78:ee:03:c9:92:7b:2f:8b:ec:5b:8c:35:27:
-    df:0c:6b:26:68:e0:71:af:61:be:b6:d8:38:64:97:
-    4e:8a:a4:63:d6:5a:1b:3a:a8:c1:f0:59:69:69:18:
-    c0:e6:96:21:0b:0a:5e:a5:92:db:73:fc:94:29:83:
-    0e:6e:b3:e8:18:59:18:3f:4b:1c:f1:f6:ea:4f:d4:
-    e5:32:b8:bd:f6:9c:f4:fe:4b:da:98:b1:58:48:38:
-    02:28:ea:4b:ec:e7:82:9a:72:a6:75:83:b2:a3:5e:
-    d6:46:6c:f5:24:29:c5:d7:51:21:df:29:fe:0c:e0:
-    2c:d2:e4:44:0a:dc:1b:cb:e5:f9:fe:48:02:fc:31:
-    e5:18:3f:7a:51:d6:12:fe:32:4d:f1:cf:2c:9a:56:
-    e5:4b:2e:20:44:c9:26:e0:90:fe:af:55:ad:83:c1:
-    db:c4:cd:d6:32:3c:64:27:10:42:ac:44:cb:e5:1b:
-    95:63:f6:5e:bb:48:a5:4e:d3:eb:c2:ee:07:11:06:
-    24:e2:3a:a8:90:ce:c9:51:ff:38:ef:89:de:0d:c9:
-    33:3d:5d:24:b6:27:41:76:19:14:2a:44:6e:01:4f:
-    23:45
-exponent1:
-    23:74:87:fa:6d:96:3d:31:f4:d5:c5:cb:d8:a3:61:
-    ca:6d:a4:fb:be:44:7c:47:1d:37:b9:b8:63:bd:d2:
-    91:83:99:22:f4:ee:04:bf:5a:0f:ef:fd:b4:a9:5b:
-    00:54:19:06:35:06:5c:18:60:90:a4:83:98:dc:eb:
-    09:f6:72:07:5f:b6:3d:53:9e:17:60:0a:55:a6:1b:
-    ee:cf:ec:d1:35:ae:cd:b6:45:33:ea:21:91:fd:4e:
-    bb:71:ff:43:75:9b:d9:15:f3:84:a5:d2:16:46:51:
-    c0:21:a4:eb:5c:44:ae:e1:b3:6f:9a:58:30:41:b7:
-    93:f1:67:e8:c5:4e:3c:83:19:fd:06:1e:20:19:b6:
-    e5:39:63:53:1c:37:0b:de:37:0d:5e:3c:b2:e7:5f:
-    55:bd:ab:59:6e:d4:5e:5f:89:89:ba:fc:52:53:71:
-    32:e5:c2:7f:be:e0:11:e1:46:cc:31:75:8d:3e:ab:
-    96:53:bc:11:a4:d1:61:1f:c5:5d:1c:96:e1:d4:03:
-    48:78:5f:3f:8f:dd:af:3d:2e:ec:52:34:32:80:e9:
-    34:a1:21:be:54:4d:a4:c4:e7:18:4c:78:f0:c7:2c:
-    1e:fe:7b:75:43:f9:c5:41:cb:9c:71:e7:f6:8c:dc:
-    2e:17:6e:4d:53:96:d8:11:cd:aa:a9:ac:69:fb:86:
-    35
-exponent2:
-    78:f3:76:9b:20:2f:b8:cc:e7:d9:d7:75:ff:82:b0:
-    28:74:83:18:94:f0:78:8d:cf:a7:cf:c2:84:48:7f:
-    51:44:b7:d0:00:84:10:24:cc:6e:eb:bc:61:35:40:
-    ba:4d:42:52:3a:c4:45:28:9a:ba:a9:fd:f6:77:8c:
-    a2:52:57:77:4d:08:c7:5b:19:07:ff:f3:9d:07:74:
-    a6:8a:b3:42:51:91:d4:98:33:de:8d:15:59:e8:81:
-    a9:c1:f7:b8:50:78:e0:b0:ff:ed:4c:ef:e8:e2:1f:
-    f4:6f:92:0b:47:1c:67:71:a5:fd:df:86:31:6f:21:
-    e0:5b:15:09:ba:14:87:70:1b:fa:ba:f2:d9:cc:cb:
-    9e:7a:87:9b:8c:9b:cc:14:29:cf:a2:1d:a1:d0:0d:
-    e8:81:47:c7:db:4f:25:4e:dc:0b:dc:9e:86:1f:54:
-    eb:c8:5b:6b:c5:6a:8d:21:a1:0c:4c:20:b0:4c:b5:
-    2b:0c:1f:9d:bb:bc:7c:1b:77:2c:63:34:64:ba:a4:
-    95:51:2d:f4:8d:51:c6:76:b2:84:a4:44:6a:32:c5:
-    8e:90:f9:ee:ac:c5:8c:ff:d7:e1:83:cf:3e:03:2c:
-    1c:a2:46:1f:97:66:b7:9a:ae:bb:18:51:ab:0c:c7:
-    d9:22:28:f1:43:d7:c5:ce:f4:99:01:63:b9:4a:79:
-    65
-coefficient:
-    15:05:3a:16:d9:0b:59:20:f6:e6:9b:40:54:ba:97:
-    a8:da:3e:40:26:6e:5e:73:66:28:ea:08:47:98:a1:
-    98:fe:19:7c:62:5b:01:48:9a:f9:8e:4e:9d:96:79:
-    7e:a2:a4:53:00:f4:06:f4:90:fa:0e:1a:d1:e0:76:
-    dd:4b:cb:98:d4:cc:13:dc:68:23:38:9f:c5:95:31:
-    3a:0d:f5:dd:d7:f6:46:fe:1e:d0:72:93:b6:90:75:
-    dd:b4:dc:0b:63:64:ee:6d:44:ce:d5:23:16:a3:6b:
-    91:55:98:1f:c8:10:86:4c:d6:9e:a1:2c:83:b0:19:
-    25:6f:cd:69:0f:1b:ea:52:6c:90:a4:11:55:3c:ad:
-    5d:f8:27:19:d6:33:38:65:72:3e:37:ad:96:a5:3b:
-    c7:25:f2:be:88:d1:32:43:15:fa:41:67:33:a6:c9:
-    52:31:0d:93:ca:95:54:14:58:8f:a1:d8:dc:c5:4c:
-    1f:58:92:30:e8:bb:bf:65:70:27:04:55:7b:e8:f0:
-    f0:8a:8c:a9:b0:a5:22:8b:b5:cc:9c:39:bf:46:b7:
-    89:07:13:60:b4:6f:e0:65:d0:4a:06:8b:32:9f:1b:
-    d2:cf:fd:10:11:e2:65:25:66:6f:10:8a:50:5c:87:
-    7a:41:75:0e:c6:de:3c:a6:7a:19:f0:46:7c:fd:f7:
-    0c
-```
 
 #### Questions:
 
@@ -224,3 +51,68 @@ numbers p and q, such that n = p × q. Please identify the values for these elem
 and key files.**
 
 **A:** These values can be identified in the outputs shown above. The modulus corresponds to **n**, the private exponent corresponds to **d**, and the two secret prime numbers are shown as **prime1 (p)** and **prime2 (q)**.
+
+## Task 2: Generating a Certificate Request for Your Web Server
+
+ow that we have set up our Certificate Authority (CA), the next step is to create a server certificate request (CSR), which we will later sign to authorize the server under our CA.To do this we run the following command to create the **Certificate Signing Request (CSR)** for our server:
+
+```sh
+openssl req -newkey rsa:2048 -sha256 \
+  -keyout server.key \
+  -out server.csr \
+  -subj "/CN=www.ferreira.com/O=FSI Inc./C=PT" \
+  -addext "subjectAltName=DNS:www.ferreira.com,DNS:www.ferreiraA.com,DNS:www.ferreiraB.com" \
+  -passout pass:dees
+```
+
+### What this command does
+
+#### 1. Generates a new RSA private key
+- `rsa:2048` specifies a **2048-bit RSA key** for encryption.  
+- The private key is stored in `server.key`.
+
+#### 2. Creates a CSR (Certificate Signing Request)
+- `server.csr` contains the **public key** and **certificate request information**.  
+- `-sha256` specifies the **hashing algorithm** used for signing the CSR.
+
+#### 3. Specifies the subject information
+- `-subj "/CN=www.ferreira.com/O=FSI Inc./C=PT"` includes:  
+  - **CN (Common Name)** → the primary domain name of the server  
+  - **O (Organization)** → the organization owning the certificate  
+  - **C (Country)** → country code 
+
+We changed this values to mock values that we saw fit for our server
+
+#### 4. Adds Subject Alternative Names (SANs)
+- `-addext "subjectAltName=DNS:www.ferreira.com,DNS:www.ferreiraA.com,DNS:www.ferreiraB.com"`  
+- This allows the certificate to be valid for **multiple domain names**.
+
+#### 5. Protects the private key with a password
+- `-passout pass:dees` encrypts the private key with the password `dees`.
+
+## Task 3: Generating a Certificate for your server
+
+After generating the certificate request, we need to “stamp” it with our CA certificate.  
+Before doing so, we must make a small change in our `openssl.cnf` file.  
+For security reasons, the line `copy_extensions = copy` is usually **commented out**, which prevents copying multiple extensions from the CSR.  
+For the purposes of this lab, we want to include multiple extensions, so we can safely uncomment this line.
+
+So now that we have that out of the way we will run the following command to sign our CSR:
+
+```sh
+openssl ca -config openssl.cnf -policy policy_anything \
+-md sha256 -days 3650 \
+-in server.csr -out server.crt -batch \
+-cert ca.crt -keyfile ca.key
+```
+After signing our server certificate, we can inspect it using the following command:`openssl x509 -in server.crt -text -noout`
+
+![Logbook 11 — Csr to crt](/images/logbook11/Task3/Task3-alt.png)
+
+From the output, we can confirm that our server certificate includes multiple domains (SANs) as intended.
+
+
+⚠️ Warning: All keys and certificates shown are ephemeral and created solely for educational purposes. They are not trusted by any system and must never be used in production
+
+
+## Task 4: Deploying Certificate in an Apache-Based HTTPS Website
