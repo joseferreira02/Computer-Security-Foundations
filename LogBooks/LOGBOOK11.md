@@ -1,6 +1,8 @@
 # LOGBOOK 11 - Public-Key Infrastructure (PKI) Lab
 
-## Task 1 – Becoming a Certificate Authority (CA)
+<a id="task1"></a>
+
+## Task 1: Becoming a Certificate Authority (CA)
 
 In this task, we set up our environment to act as a **Certificate Authority (CA)** so that we can issue certificates in later tasks. This was done by creating a self-signed CA certificate using OpenSSL.
 We first copied the system OpenSSL configuration file from `/usr/lib/ssl/openssl.cnf` into our working directory so that the CA configuration could be used locally without modifying system files.
@@ -184,6 +186,73 @@ about:preferences#privacy → Certificates → View Certificates → Authorities
 By importing our CA as trusted, Firefox now recognizes certificates issued by it. As a result, our website is trusted, and we can connect to `https://www.ferreira2025.com` via HTTPS **without any warnings or issues**.
 
 ![Logbook 11 — Success https connection](/images/logbook11/Task4/Task4_success.png)
+
+
+## Task 5: Launching a Man-In-The-Middle Attack
+
+With the knowledge learned in the previous tasks, we now attempt to simulate a Man-in-the-Middle (MITM) attack. We were instructed to choose a website of personal significance; in our case, we selected the Portuguese bank, **Santander**, whose official URL is **www.santander.pt**.
+
+The first objective is to avoid immediately raising suspicion in the victim’s browser. If Firefox displays a security warning indicating that the website is insecure, a vigilant user would likely abort the connection. Therefore, our goal is to make the fake website appear *cryptographically valid* from the browser’s perspective.
+
+To achieve this, we first generate a **server private key** and a **Certificate Signing Request (CSR)**, which is then signed by our own Certificate Authority (CA) that has been manually imported into Firefox as a trusted authority.
+
+The resulting certificate **must include `www.santander.pt` as its Common Name (CN)** and **at least one Subject Alternative Name (SAN) matching the same hostname**. This requirement is crucial because modern browsers no longer rely on the Common Name field for hostname verification. Instead, Firefox validates the requested domain exclusively against the Subject Alternative Name extension. If the SAN extension is missing or does not contain `www.santander.pt`, the browser will reject the certificate even if it is signed by a trusted CA.
+
+By explicitly adding a SAN entry equal to the Common Name, we ensure that Firefox can successfully verify that the certificate presented by our malicious server is valid for `www.santander.pt` and is signed by a trusted authority. As a result, the browser does not display any security warnings, allowing the victim to access the fake website without suspecting a Man-in-the-Middle attack.
+
+Taking these considerations into account, we generated the following server certificate:
+
+![Logbook 11 — Santander certificate](/images/logbook11/Task5/santander_cert.png)
+
+After generating the certificate, it must be added to the Docker container hosting the malicious web server. We then configure Apache so that when Firefox requests the URL `www.santander.pt`, the request is handled by a dedicated HTTPS virtual host.
+
+After generating the certificate, it is copied into the Docker container that hosts our Apache web server. We then configure Apache to include an HTTPS virtual host for the domain `www.santander.pt`.
+
+When Firefox sends a request for `www.santander.pt`, Apache selects this virtual host based on the requested hostname and responds using the corresponding TLS configuration. The server presents the generated certificate and serves content from the specified document root, which in this experiment contains a simple placeholder website (bank32) used only to verify that the request is handled correctly.
+
+This setup allows us to confirm that HTTPS connections to `www.santander.pt` are successfully established with our server and that the browser does not raise certificate warnings , in part because the CA we given was already added to the Authorities of our firefox browser.
+
+Where we can see what the apache configuration for our server looks like:
+
+![Logbook 11 — Santander apache conf](/images/logbook11/Task5/santander_apache.png)
+
+So we just need to follow the same steps we used in [Task 4](#task-4-deploying-certificate-in-an-apache-based-https-website) with santander configuration to run it in our apache server.
+
+At this stage, the only remaining step is to modify the DNS resolution so that requests for `www.santander.pt` are redirected to our malicious server at IP address **10.9.0.80**. In a real-world attack, this redirection would typically be achieved through a DNS cache poisoning attack.
+
+However, for the purposes of this controlled MITM simulation, we emulate the outcome of such an attack by manually modifying the victim machine’s `/etc/hosts` file. By adding the entry `10.9.0.80 www.santander.pt`, the operating system resolves the Santander domain name to our server’s IP address, causing the victim’s browser to send HTTPS requests for `www.santander.pt` to our controlled server.
+
+Thats it!
+
+At this point, when we assume the role of Alice and attempt to access `www.santander.pt`, the browser resolves the domain name to the IP address **10.9.0.80**. As a result, the HTTPS request is sent to our controlled Apache server running at that address.
+
+During the TLS handshake, the server presents a certificate for `www.santander.pt` that has been signed by the root Certificate Authority created in Task 1 and previously imported into Firefox’s trusted authorities store. Since the certificate chain is valid and the hostname matches, Firefox accepts the connection without displaying any security warnings.
+
+### **With MITM:**
+
+![Logbook 11 — Santander success](/images/logbook11/Task5/output.gif)
+
+
+### **Without MITM:**
+
+![Logbook 11 — Santander normal](/images/logbook11/Task5/normal_santander.gif)
+
+## Task 6: Launching a Man-In-The-Middle Attack with a Compromised CA
+
+This was already demonstrated in Task 5. However, it was unclear whether Task 5 required us to create a certificate for the attack server. If a CA’s private key were stolen, an attacker could generate an unlimited number of fraudulent certificates and set up phishing servers at will, all of which would be trusted by Firefox because the certificates appear to be valid (at least in our firefox configuration). In contrast, if the CA has not been authorized, any phishing attempt would trigger certificate errors in the browser. This is because the PKI relies on a strict chain of trust, where the Root CA must be fully trusted and authentic for certificates to be accepted.
+
+- Here we can see an **example of what our task 5 would look like without giving our root CA authority in firefox**:
+
+![Logbook 11 — Error](/images/logbook11/Task5/error.gif)
+
+
+
+
+
+
+
+
+
 
 
 
