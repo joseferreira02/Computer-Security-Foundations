@@ -121,7 +121,7 @@ from scapy.all import *
 
 def spoof_reply(pkt):
     if ICMP in pkt and pkt[ICMP].type == 8: 
-        print(f"ICMP Request capturado: {pkt[IP].src} -> {pkt[IP].dst}")
+        print(f"ICMP Request captured: {pkt[IP].src} -> {pkt[IP].dst}")
 
         ip = IP(src=pkt[IP].dst, dst=pkt[IP].src)
         icmp = ICMP(type=0, id=pkt[ICMP].id, seq=pkt[ICMP].seq)
@@ -133,8 +133,12 @@ def spoof_reply(pkt):
             spoofed_pkt = ip/icmp
 
         send(spoofed_pkt, verbose=0)
-        print(f"ICMP Reply spoofed enviado: {spoofed_pkt[IP].src} -> {spoofed_pkt[IP].dst}")
+        print(f"ICMP Reply spoofed sent: {spoofed_pkt[IP].src} -> {spoofed_pkt[IP].dst}")
 
-print("A aguardar ICMP requests...")
-sniff(iface='br-c93733e9f913', filter='icmp[icmptype] == 8', prn=spoof_reply)
+print("Waiting for ICMP requests...")
+sniff(iface='br-3dd504098706', filter='icmp[icmptype] == 8', prn=spoof_reply)
 ```
+
+![Sniff Ping](../images/logbook12/task4_pings.png)
+
+![Sniff Spoof](../images/logbook12/task4_sniff_spoof.png)
