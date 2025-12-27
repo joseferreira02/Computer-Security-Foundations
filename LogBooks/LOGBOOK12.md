@@ -1,10 +1,12 @@
 # LOGBOOK 12 - Sniffing and Spoofing Lab
 
+Note: There is an inconsistency in the IDs used in the commands because we had some problems with the VM while solving the tasks, making it necessary to reconfigure the VM.
+
 ## Task 1: Sniffing Packets
 
 ## Task 1.1.A
 
-After using the command `dockup` and verifying that the containers where working as expected, we created `sniffer.py`.
+After using the command `dcup` and verifying that the containers where working as expected, we created `sniffer.py`.
 
 Following the guide, we changed the interface in the example with the Host VM one (SEED).
 
@@ -45,7 +47,7 @@ As the code from the guide already had the icmp filter in the line `pkt = sniff(
 ![ICMP Filter](../images/logbook12/task1.1b_icmpfilter.png)
 
 
-- Result then updating the filter to`filter='tcp and src host 10.9.0.5 and dst port 23'`
+- Result then updating the filter to `filter='tcp and src host 10.9.0.5 and dst port 23'`
 
 
 ![TCP and Host](../images/logbook12/task1.1b_tcpfilter_telnet.png)
@@ -85,8 +87,7 @@ Here we see that the spoofing worked, and the spoofer is using the address 1.2.3
 
 ## Task 1.3: Traceroute
 
-- traceroute.py
-
+**traceroute.py**
 ```
 
 #!/usr/bin/env python3
